@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OptiTron — Console Library Index</title>
+<style>
+/* ============================================================
+   THEME / BASE
+   ============================================================ */
+:root{
+  --bg:#06090f;
+  --panel:rgba(255,255,255,.045);
+  --panel-2:rgba(255,255,255,.075);
+  --line:rgba(255,255,255,.09);
+  --line-strong:rgba(255,255,255,.18);
+  --text:#e9effb;
+  --muted:#8a99be;
+  --muted-2:#63708f;
+  --accent:#4a7dff;
+  --accent-2:#9b6bff;
+  --ok:#33d69f;
+  --warn:#ffb84d;
+  --danger:#ff5c7a;
+  --radius:14px;
+  --radius-lg:22px;
+  --shadow:0 24px 60px -24px rgba(0,0,0,.85);
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+body[data-console="ps4"]{ --accent:#4a7dff; --accent-2:#7b5cff; }
+body[data-console="ps5"]{ --accent:#00cfff; --accent-2:#5ce1ff; }
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family:'Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+body::before{
+  content:''; position:fixed; inset:0; z-index:-2; pointer-events:none;
+  background:
+    radial-gradient(900px 620px at 12% -12%, rgba(74,125,255,.20), transparent 62%),
+    radial-gradient(820px 560px at 88% -6%, rgba(0,207,255,.13), transparent 60%),
+    radial-gradient(700px 700px at 50% 120%, rgba(155,107,255,.10), transparent 60%),
+    linear-gradient(180deg,#070b13 0%, #05080e 55%, #04060a 100%);
+  transition:background .6s ease;
+}
+body::after{
+  content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);
+  background-size:52px 52px;
+  -webkit-mask-image:radial-gradient(circle at 50% 0%, #000 0%, transparent 72%);
+          mask-image:radial-gradient(circle at 50% 0%, #000 0%, transparent 72%);
+}
+button{ font:inherit; color:inherit; cursor:pointer; }
+input,select{ font:inherit; color:inherit; }
+::selection{ background:rgba(74,125,255,.4); }
+
+/* scrollbars */
+*::-webkit-scrollbar{ width:10px; height:10px; }
+*::-webkit-scrollbar-track{ background:transparent; }
+*::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.12); border-radius:20px; border:2px solid transparent; background-clip:content-box; }
+*::-webkit-scrollbar-thumb:hover{ background:rgba(255,255,255,.25); background-clip:content-box; }
+
+/* ============================================================
+   SPLASH
+   ============================================================ */
+#splash{
+  position:fixed; inset:0; z-index:100;
+  display:flex; align-items:center; justify-content:center;
+  padding:32px 20px;
+  transition:opacity .5s ease, transform .5s ease, visibility .5s;
+}
+#splash.is-hidden{ opacity:0; transform:scale(1.04); visibility:hidden; pointer-events:none; }
+
+.splash-inner{
+  width:min(880px,100%);
+  text-align:center;
+  animation:rise .8s cubic-bezier(.2,.8,.25,1) both;
+}
+@keyframes rise{ from{ opacity:0; transform:translateY(26px);} to{ opacity:1; transform:none; } }
+
+.brand-mark{
+  width:76px; height:76px; margin:0 auto 26px;
+  display:grid; place-items:center;
+  font-size:34px; color:#fff;
+  border-radius:22px;
+  background:linear-gradient(145deg, rgba(74,125,255,.28), rgba(0,207,255,.10));
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 0 0 1px rgba(74,125,255,.14), 0 30px 70px -30px rgba(74,125,255,.9);
+  animation:pulse 4s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{ box-shadow:0 0 0 1px rgba(74,125,255,.14), 0 30px 70px -30px rgba(74,125,255,.85); }
+  50%    { box-shadow:0 0 0 1px rgba(0,207,255,.22), 0 30px 90px -26px rgba(0,207,255,.85); }
+}
+
+.splash-title{
+  margin:0;
+  font-size:clamp(34px,6vw,60px);
+  font-weight:800;
+  letter-spacing:-.03em;
+  line-height:1.05;
+  background:linear-gradient(100deg,#ffffff 10%, #a9c6ff 45%, #7ce7ff 80%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.splash-title span{ display:block; font-size:.5em; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); -webkit-text-fill-color:var(--muted); margin-top:14px; }
+.splash-sub{
+  color:var(--muted); margin:22px auto 0; max-width:520px; line-height:1.6; font-size:15px;
+}
+
+.console-grid{
+  display:flex; gap:22px; justify-content:center; flex-wrap:wrap;
+  margin:46px 0 0;
+}
+.console-card{
+  --c:#4a7dff;
+  position:relative;
+  width:260px; padding:34px 26px 26px;
+  border-radius:var(--radius-lg);
+  background:linear-gradient(165deg, rgba(255,255,255,.075), rgba(255,255,255,.018));
+  border:1px solid var(--line);
+  text-align:left;
+  overflow:hidden;
+  transition:transform .3s cubic-bezier(.2,.8,.25,1), border-color .3s, box-shadow .3s;
+}
+.console-card::before{
+  content:''; position:absolute; inset:-40% -40% auto auto; width:220px; height:220px;
+  background:radial-gradient(circle, color-mix(in srgb, var(--c) 55%, transparent), transparent 68%);
+  opacity:.45; filter:blur(10px); transition:opacity .3s;
+}
+.console-card::after{
+  content:''; position:absolute; left:0; right:0; bottom:0; height:2px;
+  background:linear-gradient(90deg, transparent, var(--c), transparent);
+  opacity:0; transition:opacity .3s;
+}
+.console-card:hover{ transform:translateY(-8px); border-color:color-mix(in srgb, var(--c) 55%, transparent); box-shadow:0 34px 70px -34px var(--c); }
+.console-card:hover::before{ opacity:.85; }
+.console-card:hover::after{ opacity:1; }
+.console-card:focus-visible{ outline:2px solid var(--c); outline-offset:4px; }
+.console-card[disabled]{ opacity:.45; cursor:progress; }
+.console-card[data-console="ps4"]{ --c:#4a7dff; }
+.console-card[data-console="ps5"]{ --c:#00cfff; }
+
+.cc-tag{ font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted-2); font-weight:700; }
+.cc-name{ font-size:44px; font-weight:800; letter-spacing:-.03em; margin:10px 0 4px; line-height:1; }
+.cc-desc{ font-size:13px; color:var(--muted); line-height:1.5; min-height:38px; }
+.cc-stats{ display:flex; gap:16px; margin-top:20px; padding-top:16px; border-top:1px solid var(--line); }
+.cc-stat b{ display:block; font-size:15px; font-weight:700; font-family:var(--mono); }
+.cc-stat span{ font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted-2); }
+.cc-enter{
+  margin-top:20px; display:flex; align-items:center; justify-content:space-between;
+  font-size:12.5px; font-weight:600; color:var(--c); letter-spacing:.04em;
+}
+.cc-enter i{ font-style:normal; transition:transform .3s; }
+.console-card:hover .cc-enter i{ transform:translateX(5px); }
+
+.splash-foot{ margin-top:42px; font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted-2); }
+
+.manual{
+  margin:34px auto 0; max-width:560px; display:none;
+  padding:20px; border-radius:var(--radius); text-align:left;
+  background:rgba(255,92,122,.07); border:1px solid rgba(255,92,122,.28);
+}
+.manual.show{ display:block; }
+.manual p{ margin:0 0 14px; font-size:13px; color:#ffb3c1; line-height:1.55; }
+.manual .row2{ display:flex; gap:10px; flex-wrap:wrap; }
+.file-btn{
+  display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:10px;
+  font-size:12.5px; font-weight:600; background:rgba(255,255,255,.08);
+  border:1px solid var(--line-strong); transition:.2s;
+}
+.file-btn:hover{ background:rgba(255,255,255,.15); }
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+#app{ min-height:100%; display:flex; flex-direction:column; }
+#app[hidden]{ display:none; }
+
+.topbar{
+  position:sticky; top:0; z-index:40;
+  background:rgba(6,9,15,.82);
+  backdrop-filter:blur(18px) saturate(160%);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+  max-width:1500px; margin:0 auto; padding:14px 24px;
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+}
+.brand{ display:flex; align-items:center; gap:12px; margin-right:4px; }
+.brand-glyph{
+  width:38px; height:38px; display:grid; place-items:center; border-radius:11px; font-size:17px;
+  background:linear-gradient(145deg, color-mix(in srgb,var(--accent) 30%, transparent), rgba(255,255,255,.05));
+  border:1px solid rgba(255,255,255,.14);
+  color:#fff;
+}
+.brand-name{ font-weight:800; letter-spacing:-.02em; font-size:15px; line-height:1.1; }
+.brand-sub{ font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted-2); font-weight:700; }
+
+.console-pill{
+  display:inline-flex; align-items:center; gap:9px;
+  padding:8px 14px; border-radius:999px;
+  background:color-mix(in srgb, var(--accent) 14%, transparent);
+  border:1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  font-size:12.5px; font-weight:700; letter-spacing:.06em;
+  transition:.2s;
+}
+.console-pill:hover{ background:color-mix(in srgb, var(--accent) 24%, transparent); }
+.pill-dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); }
+.pill-switch{ font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); border-left:1px solid var(--line-strong); padding-left:9px; margin-left:2px; }
+
+.search-wrap{ position:relative; flex:1 1 320px; min-width:220px; }
+.search-wrap input{
+  width:100%; padding:11px 40px 11px 40px; border-radius:11px;
+  background:rgba(255,255,255,.05); border:1px solid var(--line);
+  font-size:13.5px; outline:none; transition:.2s;
+}
+.search-wrap input::placeholder{ color:var(--muted-2); }
+.search-wrap input:focus{
+  border-color:color-mix(in srgb, var(--accent) 60%, transparent);
+  background:rgba(255,255,255,.075);
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.search-ico{ position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted-2); font-size:13px; pointer-events:none; }
+.search-clear{
+  position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  width:24px; height:24px; border-radius:7px; border:0; background:transparent;
+  color:var(--muted); font-size:12px; display:grid; place-items:center;
+}
+.search-clear:hover{ background:rgba(255,255,255,.1); color:#fff; }
+
+.controls{ display:flex; align-items:center; gap:10px; }
+select#sort{
+  padding:10px 12px; border-radius:10px; font-size:12.5px; font-weight:600;
+  background:rgba(255,255,255,.05); border:1px solid var(--line); outline:none;
+  appearance:none; padding-right:30px;
+  background-image:linear-gradient(45deg,transparent 50%, var(--muted) 50%),linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:calc(100% - 15px) 50%, calc(100% - 10px) 50%;
+  background-size:5px 5px,5px 5px; background-repeat:no-repeat;
+}
+select#sort option{ background:#0b1120; }
+.view-toggle{ display:flex; padding:3px; border-radius:10px; background:rgba(255,255,255,.05); border:1px solid var(--line); }
+.view-toggle button{
+  border:0; background:transparent; padding:7px 13px; border-radius:8px;
+  font-size:12px; font-weight:600; color:var(--muted); transition:.18s;
+}
+.view-toggle button.active{ background:color-mix(in srgb, var(--accent) 26%, transparent); color:#fff; }
+
+.subbar{
+  max-width:1500px; margin:0 auto; padding:0 24px 12px;
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+}
+.stats{ display:flex; gap:18px; flex-wrap:wrap; font-size:12px; }
+.stat b{ font-family:var(--mono); font-size:13px; font-weight:700; color:#fff; }
+.stat span{ color:var(--muted-2); letter-spacing:.08em; text-transform:uppercase; font-size:10px; margin-left:6px; }
+
+.letters{
+  display:flex; gap:4px; overflow-x:auto; flex:1 1 320px;
+  padding:2px; scrollbar-width:none;
+}
+.letters::-webkit-scrollbar{ display:none; }
+.letters button{
+  flex:0 0 auto; min-width:26px; padding:5px 7px; border-radius:7px;
+  border:1px solid transparent; background:transparent;
+  font-size:11.5px; font-weight:700; color:var(--muted-2); font-family:var(--mono);
+  transition:.16s;
+}
+.letters button:hover{ color:#fff; background:rgba(255,255,255,.07); }
+.letters button.active{ color:#fff; background:color-mix(in srgb, var(--accent) 30%, transparent); border-color:color-mix(in srgb, var(--accent) 55%, transparent); }
+
+/* ============================================================
+   LIST
+   ============================================================ */
+.content{ flex:1; max-width:1500px; width:100%; margin:0 auto; padding:22px 24px 60px; }
+
+.list{ display:flex; flex-direction:column; gap:8px; }
+
+.row{
+  display:grid;
+  grid-template-columns:44px minmax(0,1fr) 110px auto;
+  align-items:center; gap:16px;
+  padding:13px 16px;
+  border-radius:var(--radius);
+  background:linear-gradient(120deg, rgba(255,255,255,.045), rgba(255,255,255,.018));
+  border:1px solid var(--line);
+  transition:transform .18s, border-color .18s, background .18s;
+}
+.row:hover{
+  border-color:color-mix(in srgb, var(--accent) 42%, transparent);
+  background:linear-gradient(120deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
+  transform:translateX(3px);
+}
+.row-num{ font-family:var(--mono); font-size:11px; color:var(--muted-2); text-align:center; }
+.row-main{ min-width:0; }
+.row-name{
+  margin:0; font-size:14.5px; font-weight:650; letter-spacing:-.01em;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.row-meta{ display:flex; align-items:center; gap:7px; margin-top:6px; flex-wrap:wrap; }
+.meta-date{ font-size:11px; color:var(--muted-2); font-family:var(--mono); }
+
+.chip{
+  display:inline-flex; align-items:center; padding:2.5px 8px; border-radius:6px;
+  font-size:10.5px; font-weight:700; letter-spacing:.04em; font-family:var(--mono);
+  border:1px solid transparent; white-space:nowrap;
+}
+.chip.id{ background:rgba(255,255,255,.06); border-color:var(--line); color:#b9c8ea; }
+.chip.ver{ background:rgba(51,214,159,.12); border-color:rgba(51,214,159,.28); color:#6ef0bd; }
+.chip.type{
+  background:rgba(255,184,77,.13); border-color:rgba(255,184,77,.3); color:#ffcb7d;
+  max-width:190px; overflow:hidden; text-overflow:ellipsis; display:inline-block; line-height:1.5;
+}
+
+.row-size{ font-family:var(--mono); font-size:12px; color:var(--muted); text-align:right; }
+.row-actions{ display:flex; gap:7px; }
+
+.btn{
+  border:1px solid var(--line-strong); background:rgba(255,255,255,.06);
+  padding:7px 13px; border-radius:9px; font-size:11.5px; font-weight:650;
+  letter-spacing:.02em; transition:.16s; white-space:nowrap;
+}
+.btn:hover{ background:rgba(255,255,255,.14); border-color:rgba(255,255,255,.3); }
+.btn.primary{
+  background:color-mix(in srgb, var(--accent) 26%, transparent);
+  border-color:color-mix(in srgb, var(--accent) 55%, transparent); color:#fff;
+}
+.btn.primary:hover{ background:color-mix(in srgb, var(--accent) 42%, transparent); }
+.btn.ghost{ background:transparent; }
+
+/* grid view */
+.list.grid{
+  display:grid; gap:12px;
+  grid-template-columns:repeat(auto-fill, minmax(290px, 1fr));
+}
+.card{
+  display:flex; flex-direction:column; gap:12px;
+  padding:16px; border-radius:var(--radius);
+  background:linear-gradient(160deg, rgba(255,255,255,.055), rgba(255,255,255,.015));
+  border:1px solid var(--line);
+  transition:transform .2s, border-color .2s, box-shadow .2s;
+}
+.card:hover{
+  transform:translateY(-4px);
+  border-color:color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow:0 22px 48px -26px var(--accent);
+}
+.card-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+.card-num{ font-family:var(--mono); font-size:10.5px; color:var(--muted-2); }
+.card-name{
+  margin:0; font-size:14px; font-weight:700; line-height:1.35;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  min-height:38px;
+}
+.card-meta{ display:flex; flex-wrap:wrap; gap:6px; }
+.card-bottom{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:auto; }
+.card-size{ font-family:var(--mono); font-size:11.5px; color:var(--muted); }
+.card-actions{ display:flex; gap:6px; }
+
+/* empty / loading */
+.empty{
+  text-align:center; padding:80px 20px; color:var(--muted);
+  border:1px dashed var(--line-strong); border-radius:var(--radius-lg);
+}
+.empty h3{ margin:0 0 8px; font-size:16px; color:var(--text); }
+.empty p{ margin:0; font-size:13px; }
+
+.load-more-wrap{ display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:26px; }
+.load-more-wrap .hint{ font-size:11.5px; color:var(--muted-2); font-family:var(--mono); letter-spacing:.05em; }
+#loadMore{ padding:12px 34px; border-radius:11px; }
+
+/* ============================================================
+   DRAWER
+   ============================================================ */
+.drawer{ position:fixed; inset:0; z-index:80; pointer-events:none; }
+.drawer[aria-hidden="false"]{ pointer-events:auto; }
+.drawer-backdrop{
+  position:absolute; inset:0; background:rgba(3,5,10,.72);
+  backdrop-filter:blur(4px); opacity:0; transition:opacity .3s;
+}
+.drawer[aria-hidden="false"] .drawer-backdrop{ opacity:1; }
+.drawer-panel{
+  position:absolute; top:0; right:0; bottom:0;
+  width:min(560px, 100%);
+  background:linear-gradient(180deg,#0a0f1a,#070b12);
+  border-left:1px solid var(--line-strong);
+  box-shadow:var(--shadow);
+  transform:translateX(100%);
+  transition:transform .34s cubic-bezier(.2,.8,.25,1);
+  display:flex; flex-direction:column;
+}
+.drawer[aria-hidden="false"] .drawer-panel{ transform:none; }
+
+.drawer-head{
+  padding:20px 22px; border-bottom:1px solid var(--line);
+  display:flex; align-items:flex-start; gap:14px;
+}
+.drawer-head h2{ margin:0; font-size:18px; line-height:1.3; letter-spacing:-.02em; flex:1; }
+.drawer-close{
+  width:32px; height:32px; flex:0 0 auto; border-radius:9px;
+  border:1px solid var(--line-strong); background:rgba(255,255,255,.06);
+  display:grid; place-items:center; font-size:13px;
+}
+.drawer-close:hover{ background:rgba(255,255,255,.15); }
+.drawer-body{ padding:20px 22px 40px; overflow-y:auto; flex:1; }
+
+.d-section{ margin-bottom:24px; }
+.d-label{
+  font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--muted-2); font-weight:800; margin-bottom:9px;
+}
+.d-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px 18px; }
+.d-item{ background:rgba(255,255,255,.04); border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
+.d-item span{ display:block; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted-2); margin-bottom:4px; }
+.d-item b{ font-size:13px; font-weight:650; font-family:var(--mono); word-break:break-all; }
+
+.magnet-box{
+  background:rgba(0,0,0,.45); border:1px solid var(--line);
+  border-radius:10px; padding:12px; font-family:var(--mono); font-size:11px;
+  line-height:1.65; color:#9fb4dd; word-break:break-all;
+  max-height:150px; overflow-y:auto;
+}
+.tracker-list{ display:flex; flex-direction:column; gap:5px; max-height:180px; overflow-y:auto; }
+.tracker{
+  font-family:var(--mono); font-size:10.5px; color:var(--muted);
+  padding:6px 10px; background:rgba(255,255,255,.035);
+  border-radius:7px; border:1px solid var(--line); word-break:break-all;
+}
+.d-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+.d-actions .btn{ padding:10px 18px; font-size:12.5px; }
+.d-link{ color:var(--accent); text-decoration:none; font-size:12.5px; word-break:break-all; }
+.d-link:hover{ text-decoration:underline; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+#toast{
+  position:fixed; left:50%; bottom:34px; transform:translate(-50%, 20px);
+  padding:11px 22px; border-radius:11px; font-size:12.5px; font-weight:650;
+  background:rgba(15,22,36,.95); border:1px solid var(--line-strong);
+  box-shadow:var(--shadow); opacity:0; pointer-events:none;
+  transition:opacity .25s, transform .25s; z-index:200;
+  display:flex; align-items:center; gap:9px;
+}
+#toast.show{ opacity:1; transform:translate(-50%, 0); }
+#toast::before{ content:'✓'; color:var(--ok); font-weight:900; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:900px){
+  .row{ grid-template-columns:minmax(0,1fr) auto; gap:10px; }
+  .row-num, .row-size{ display:none; }
+  .row-actions .btn.ghost{ display:none; }
+}
+@media (max-width:640px){
+  .topbar-inner{ padding:12px 16px; gap:12px; }
+  .brand-sub{ display:none; }
+  .subbar{ padding:0 16px 10px; }
+  .content{ padding:16px 16px 50px; }
+  .console-card{ width:100%; max-width:340px; }
+  .splash-title span{ font-size:.42em; }
+  .d-grid{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================= SPLASH ================= -->
+<section id="splash">
+  <div class="splash-inner">
+    <div class="brand-mark">◈</div>
+    <h1 class="splash-title">OptiTron<span>Welcomes You</span></h1>
+    <p class="splash-sub">
+      Your offline magnet library, indexed and searchable.
+      Choose a console to enter the catalog.
+    </p>
+
+    <div class="console-grid">
+      <button class="console-card" data-console="ps4" data-index="ps4">
+        <div class="cc-tag">PlayStation 4</div>
+        <div class="cc-name">PS4</div>
+        <div class="cc-desc">Backports, repacks, DLC bundles and PS2 classics.</div>
+        <div class="cc-stats">
+          <div class="cc-stat"><b data-count="ps4">—</b><span>Titles</span></div>
+          <div class="cc-stat"><b data-size="ps4">—</b><span>Library</span></div>
+        </div>
+        <div class="cc-enter">Enter library <i>→</i></div>
+      </button>
+
+      <button class="console-card" data-console="ps5" data-index="ps5">
+        <div class="cc-tag">PlayStation 5</div>
+        <div class="cc-name">PS5</div>
+        <div class="cc-desc">FPKG dumps, exFAT images and FFPFSC payloads.</div>
+        <div class="cc-stats">
+          <div class="cc-stat"><b data-count="ps5">—</b><span>Titles</span></div>
+          <div class="cc-stat"><b data-size="ps5">—</b><span>Library</span></div>
+        </div>
+        <div class="cc-enter">Enter library <i>→</i></div>
+      </button>
+    </div>
+
+    <div class="manual" id="manual">
+      <p id="manualMsg">⚠ Could not auto-load the catalog files (this page was probably opened directly from disk). Load them manually below.</p>
+      <div class="row2">
+        <label class="file-btn">📄 Load ps4magnets.json
+          <input type="file" accept=".json,application/json" data-target="ps4" hidden />
+        </label>
+        <label class="file-btn">📄 Load ps5magnets.json
+          <input type="file" accept=".json,application/json" data-target="ps5" hidden />
+        </label>
+      </div>
+    </div>
+
+    <div class="splash-foot">Local Catalog · No Telemetry · v1.0</div>
+  </div>
+</section>
+
+<!-- ================= APP ================= -->
+<div id="app" hidden>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-glyph">◈</span>
+        <div>
+          <div class="brand-name">OptiTron</div>
+          <div class="brand-sub">Library Index</div>
+        </div>
+      </div>
+
+      <button class="console-pill" id="consolePill" title="Switch console">
+        <span class="pill-dot"></span>
+        <span id="pillLabel">PS4</span>
+        <span class="pill-switch">switch</span>
+      </button>
+
+      <div class="search-wrap">
+        <span class="search-ico">⌕</span>
+        <input id="search" type="search" placeholder="Search title, TitleID, version, type…   ( / )" autocomplete="off" spellcheck="false" />
+        <button class="search-clear" id="searchClear" hidden aria-label="Clear search">✕</button>
+      </div>
+
+      <div class="controls">
+        <select id="sort" aria-label="Sort">
+          <option value="name-asc">Name A → Z</option>
+          <option value="name-desc">Name Z → A</option>
+          <option value="size-desc">Size ↓</option>
+          <option value="size-asc">Size ↑</option>
+          <option value="date-desc" selected>Newest first</option>
+          <option value="date-asc">Oldest first</option>
+        </select>
+        <div class="view-toggle">
+          <button data-view="list" class="active">List</button>
+          <button data-view="grid">Grid</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="subbar">
+      <div class="stats">
+        <div class="stat"><b id="statTotal">0</b><span>Catalog</span></div>
+        <div class="stat"><b id="statMatch">0</b><span>Showing</span></div>
+        <div class="stat"><b id="statSize">0</b><span>Total size</span></div>
+      </div>
+      <div class="letters" id="letters"></div>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="list" id="list"></div>
+    <div class="load-more-wrap" id="loadWrap" hidden>
+      <button class="btn primary" id="loadMore">Load more</button>
+      <div class="hint" id="loadHint"></div>
+    </div>
+  </main>
+</div>
+
+<!-- ================= DRAWER ================= -->
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-backdrop" data-close></div>
+  <div class="drawer-panel">
+    <div class="drawer-head">
+      <h2 id="drawerTitle">Details</h2>
+      <button class="drawer-close" data-close aria-label="Close">✕</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </div>
+</aside>
+
+<div id="toast"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ============================================================
+   CONSTANTS & STATE
+   ============================================================ */
+const FILES = { ps4: 'ps4magnets.json', ps5: 'ps5magnets.json' };
+const PAGE_SIZE = 60;
+const ALPHABET = ['ALL', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''), '#'];
+
+const state = {
+  console: null,
+  data:   { ps4: null, ps5: null },
+  index:  { ps4: new Map(), ps5: new Map() },
+  status: { ps4: 'idle', ps5: 'idle' },
+  query: '',
+  sort: 'date-desc',
+  letter: 'ALL',
+  view: 'list',
+  page: 1,
+};
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+const esc = (s) => String(s).replace(/[&<>"']/g, c => (
+  { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+));
+
+function fmtSize(bytes) {
+  const n0 = Number(bytes);
+  if (!n0 || n0 <= 0) return '—';
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let i = 0, n = n0;
+  while (n >= 1024 && i < units.length - 1) { n /= 1024; i++; }
+  const dec = n >= 100 ? 0 : n >= 10 ? 1 : 2;
+  return n.toFixed(dec) + ' ' + units[i];
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  if (isNaN(dt)) return '—';
+  return dt.toISOString().slice(0, 10);
+}
+
+function dateValue(d) {
+  const t = Date.parse(d);
+  return Number.isNaN(t) ? 0 : t;
+}
+
+function firstChar(name) {
+  const m = String(name || '').trim().match(/[a-z0-9]/i);
+  if (!m) return '#';
+  const c = m[0].toUpperCase();
+  return /[A-Z]/.test(c) ? c : '#';
+}
+
+function versionLabel(v) {
+  if (!v) return '';
+  const s = String(v).trim();
+  return /^v/i.test(s) ? s : 'v' + s;
+}
+
+let toastTimer;
+function toast(msg) {
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1900);
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast('Magnet link copied');
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); toast('Magnet link copied'); }
+    catch { toast('Copy failed — select manually'); }
+    ta.remove();
+  }
+}
+
+/* ============================================================
+   DATA INGEST
+   ============================================================ */
+function normalizeEntry(raw, platform, i) {
+  return {
+    id: `${platform}:${i}`,
+    platform,
+    name: String(raw.Name || 'Untitled').trim(),
+    titleId: String(raw.TitleID || '').trim(),
+    version: String(raw.Version || '').trim(),
+    type: String(raw.Type || '').trim(),
+    magnet: String(raw.Magnet || '').trim(),
+    date: raw.CreationDate || null,
+    size: Number(raw.Size) || 0,
+    pieceLength: Number(raw.PieceLength) || 0,
+    createdBy: String(raw.CreatedBy || '').trim(),
+    comment: String(raw.Comment || '').trim(),
+    trackers: Array.isArray(raw.Trackers) ? raw.Trackers : [],
+  };
+}
+
+function ingest(platform, arr) {
+  if (!Array.isArray(arr)) throw new Error('Not an array');
+  const list = arr.map((g, i) => normalizeEntry(g, platform, i));
+  state.data[platform] = list;
+  const map = new Map();
+  list.forEach(it => map.set(it.id, it));
+  state.index[platform] = map;
+  state.status[platform] = 'ready';
+  updateConsoleCards();
+  if (state.console === platform) resetAndRender();
+}
+
+function updateConsoleCards() {
+  ['ps4', 'ps5'].forEach(p => {
+    const list = state.data[p];
+    const countEl = document.querySelector(`[data-count="${p}"]`);
+    const sizeEl  = document.querySelector(`[data-size="${p}"]`);
+    const card    = document.querySelector(`.console-card[data-console="${p}"]`);
+    if (list) {
+      if (countEl) countEl.textContent = list.length.toLocaleString();
+      const total = list.reduce((a, b) => a + b.size, 0);
+      if (sizeEl) sizeEl.textContent = fmtSize(total);
+      if (card) card.removeAttribute('disabled');
+    } else {
+      if (countEl) countEl.textContent = state.status[p] === 'error' ? 'n/a' : '…';
+      if (sizeEl)  sizeEl.textContent  = state.status[p] === 'error' ? '—'   : '…';
+    }
+  });
+}
+
+async function loadCatalogs() {
+  const results = await Promise.allSettled(
+    ['ps4', 'ps5'].map(async (p) => {
+      try {
+        const res = await fetch(FILES[p], { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        ingest(p, json);
+        return p;
+      } catch (err) {
+        state.status[p] = 'error';
+        throw err;
+      }
+    })
+  );
+  const failed = results.some(r => r.status === 'rejected');
+  if (failed) $('#manual').classList.add('show');
+  updateConsoleCards();
+  if (state.console) resetAndRender();
+}
+
+/* manual file loading (for file:// usage) */
+$$('#manual input[type=file]').forEach(input => {
+  input.addEventListener('change', () => {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const target = input.dataset.target;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const json = JSON.parse(reader.result);
+        ingest(target, json);
+        toast(`${target.toUpperCase()} catalog loaded (${state.data[target].length} titles)`);
+        if (state.data.ps4 && state.data.ps5) $('#manual').classList.remove('show');
+      } catch (e) {
+        toast('Invalid JSON file');
+      }
+    };
+    reader.readAsText(file);
+  });
+});
+
+/* ============================================================
+   FILTER / SORT
+   ============================================================ */
+const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
+function getFiltered() {
+  const all = state.data[state.console] || [];
+  const q = state.query.trim().toLowerCase();
+  const letter = state.letter;
+
+  const out = all.filter(it => {
+    if (letter !== 'ALL') {
+      const c = firstChar(it.name);
+      const isLetter = /[A-Z]/.test(c);
+      if (letter === '#' ? isLetter : c !== letter) return false;
+    }
+    if (!q) return true;
+    return (
+      it.name.toLowerCase().includes(q) ||
+      it.titleId.toLowerCase().includes(q) ||
+      it.version.toLowerCase().includes(q) ||
+      it.type.toLowerCase().includes(q) ||
+      it.createdBy.toLowerCase().includes(q)
+    );
+  });
+
+  switch (state.sort) {
+    case 'name-asc':   out.sort((a, b) => collator.compare(a.name, b.name)); break;
+    case 'name-desc':  out.sort((a, b) => collator.compare(b.name, a.name)); break;
+    case 'size-desc':  out.sort((a, b) => b.size - a.size); break;
+    case 'size-asc':   out.sort((a, b) => a.size - b.size); break;
+    case 'date-desc':  out.sort((a, b) => dateValue(b.date) - dateValue(a.date)); break;
+    case 'date-asc':   out.sort((a, b) => dateValue(a.date) - dateValue(b.date)); break;
+  }
+  return out;
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function metaHTML(it) {
+  const bits = [];
+  if (it.titleId) bits.push(`<span class="chip id">${esc(it.titleId)}</span>`);
+  if (it.version) bits.push(`<span class="chip ver">${esc(versionLabel(it.version))}</span>`);
+  if (it.type)    bits.push(`<span class="chip type" title="${esc(it.type)}">${esc(it.type)}</span>`);
+  bits.push(`<span class="meta-date">${fmtDate(it.date)}</span>`);
+  return bits.join('');
+}
+
+function rowHTML(it, i) {
+  return `<article class="row" data-id="${it.id}">
+    <div class="row-num">${String(i + 1).padStart(2, '0')}</div>
+    <div class="row-main">
+      <h3 class="row-name" title="${esc(it.name)}">${esc(it.name)}</h3>
+      <div class="row-meta">${metaHTML(it)}</div>
+    </div>
+    <div class="row-size">${fmtSize(it.size)}</div>
+    <div class="row-actions">
+      <button class="btn ghost" data-act="copy">Copy</button>
+      <button class="btn ghost" data-act="open">Open</button>
+      <button class="btn primary" data-act="info">Details</button>
+    </div>
+  </article>`;
+}
+
+function cardHTML(it, i) {
+  return `<article class="card" data-id="${it.id}">
+    <div class="card-top">
+      <h3 class="card-name" title="${esc(it.name)}">${esc(it.name)}</h3>
+      <span class="card-num">${String(i + 1).padStart(2, '0')}</span>
+    </div>
+    <div class="card-meta">${metaHTML(it)}</div>
+    <div class="card-bottom">
+      <span class="card-size">${fmtSize(it.size)}</span>
+      <div class="card-actions">
+        <button class="btn ghost" data-act="copy">Copy</button>
+        <button class="btn primary" data-act="info">Details</button>
+      </div>
+    </div>
+  </article>`;
+}
+
+function render() {
+  const listEl = $('#list');
+  const wrapEl = $('#loadWrap');
+  const hintEl = $('#loadHint');
+
+  if (!state.console) return;
+
+  /* loading / error state */
+  if (!state.data[state.console]) {
+    const failed = state.status[state.console] === 'error';
+    listEl.className = 'list';
+    listEl.innerHTML = `<div class="empty">
+      <h3>${failed ? 'Catalog unavailable' : 'Loading catalog…'}</h3>
+      <p>${failed
+        ? 'The JSON file could not be fetched. Reload the page and import it manually.'
+        : 'Reading magnet index, please stand by.'}</p>
+    </div>`;
+    wrapEl.hidden = true;
+    $('#statTotal').textContent = '0';
+    $('#statMatch').textContent = '0';
+    $('#statSize').textContent = '—';
+    return;
+  }
+
+  const filtered = getFiltered();
+  const total = filtered.length;
+  const shown = Math.min(state.page * PAGE_SIZE, total);
+  const slice = filtered.slice(0, shown);
+
+  /* stats */
+  const totalSize = filtered.reduce((a, b) => a + b.size, 0);
+  $('#statTotal').textContent = state.data[state.console].length.toLocaleString();
+  $('#statMatch').textContent = total.toLocaleString();
+  $('#statSize').textContent  = fmtSize(totalSize);
+
+  /* list */
+  listEl.className = 'list' + (state.view === 'grid' ? ' grid' : '');
+
+  if (total === 0) {
+    listEl.innerHTML = `<div class="empty">
+      <h3>No matches</h3>
+      <p>Try a different search term or clear the letter filter.</p>
+    </div>`;
+    wrapEl.hidden = true;
+    return;
+  }
+
+  const build = state.view === 'grid' ? cardHTML : rowHTML;
+  listEl.innerHTML = slice.map((it, i) => build(it, i)).join('');
+
+  /* load more */
+  if (shown < total) {
+    wrapEl.hidden = false;
+    hintEl.textContent = `Showing ${shown} of ${total.toLocaleString()} entries`;
+  } else {
+    wrapEl.hidden = true;
+  }
+}
+
+function resetAndRender() {
+  state.page = 1;
+  render();
+}
+
+/* ============================================================
+   LETTER BAR
+   ============================================================ */
+function buildLetters() {
+  const box = $('#letters');
+  box.innerHTML = ALPHABET.map(l =>
+    `<button data-letter="${l}"${l === state.letter ? ' class="active"' : ''}>${l}</button>`
+  ).join('');
+}
+
+/* ============================================================
+   DRAWER
+   ============================================================ */
+function openDrawer(item) {
+  const drawer = $('#drawer');
+  const body = $('#drawerBody');
+
+  $('#drawerTitle').textContent = item.name;
+
+  const safeComment = /^https?:\/\//i.test(item.comment) ? item.comment : '';
+  const trackers = item.trackers.length
+    ? item.trackers.map(t => `<div class="tracker">${esc(t)}</div>`).join('')
+    : `<div class="tracker">— no trackers listed —</div>`;
+
+  body.innerHTML = `
+    <div class="d-section">
+      <div class="d-label">Identity</div>
+      <div class="d-grid">
+        <div class="d-item"><span>Platform</span><b>${item.platform.toUpperCase()}</b></div>
+        <div class="d-item"><span>Title ID</span><b>${esc(item.titleId || '—')}</b></div>
+        <div class="d-item"><span>Version</span><b>${esc(item.version || '—')}</b></div>
+        <div class="d-item"><span>Type</span><b>${esc(item.type || 'Base / Untagged')}</b></div>
+      </div>
+    </div>
+
+    <div class="d-section">
+      <div class="d-label">Package</div>
+      <div class="d-grid">
+        <div class="d-item"><span>Size</span><b>${fmtSize(item.size)}</b></div>
+        <div class="d-item"><span>Bytes</span><b>${item.size.toLocaleString()}</b></div>
+        <div class="d-item"><span>Piece length</span><b>${item.pieceLength ? fmtSize(item.pieceLength) : '—'}</b></div>
+        <div class="d-item"><span>Created</span><b>${fmtDate(item.date)}</b></div>
+        <div class="d-item"><span>Created by</span><b>${esc(item.createdBy || '—')}</b></div>
+        <div class="d-item"><span>Trackers</span><b>${item.trackers.length}</b></div>
+      </div>
+    </div>
+
+    <div class="d-section">
+      <div class="d-label">Magnet link</div>
+      <div class="magnet-box">${esc(item.magnet || '—')}</div>
+      <div class="d-actions">
+        <button class="btn primary" data-drawer-act="copy">Copy magnet</button>
+        <button class="btn" data-drawer-act="open">Open in client</button>
+      </div>
+    </div>
+
+    <div class="d-section">
+      <div class="d-label">Trackers (${item.trackers.length})</div>
+      <div class="tracker-list">${trackers}</div>
+    </div>
+
+    ${safeComment ? `
+    <div class="d-section">
+      <div class="d-label">Source</div>
+      <a class="d-link" href="${esc(safeComment)}" target="_blank" rel="noopener noreferrer">${esc(safeComment)}</a>
+    </div>` : ''}
+  `;
+
+  drawer.setAttribute('aria-hidden', 'false');
+
+  body.querySelectorAll('[data-drawer-act]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.drawerAct === 'copy') copyText(item.magnet);
+      else window.location.href = item.magnet;
+    });
+  });
+}
+
+function closeDrawer() {
+  $('#drawer').setAttribute('aria-hidden', 'true');
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function enterConsole(platform) {
+  if (!state.data[platform] && state.status[platform] === 'error') {
+    $('#manual').classList.add('show');
+    return;
+  }
+  state.console = platform;
+  state.page = 1;
+  state.query = '';
+  state.letter = 'ALL';
+
+  /* always open the catalog sorted by newest entries first */
+  state.sort = 'date-desc';
+  $('#sort').value = 'date-desc';
+
+  document.body.dataset.console = platform;
+
+  $('#search').value = '';
+  $('#searchClear').hidden = true;
+  $('#pillLabel').textContent = platform.toUpperCase();
+  buildLetters();
+
+  $('#splash').classList.add('is-hidden');
+  $('#app').hidden = false;
+  document.body.style.overflow = '';
+
+  render();
+  window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+}
+
+function returnToSplash() {
+  closeDrawer();
+  $('#app').hidden = true;
+  $('#splash').classList.remove('is-hidden');
+  state.console = null;
+  updateConsoleCards();
+}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+document.addEventListener('click', (e) => {
+  /* splash console pick */
+  const card = e.target.closest('.console-card');
+  if (card) {
+    if (card.hasAttribute('disabled')) return;
+    enterConsole(card.dataset.console);
+    return;
+  }
+
+  /* row / card actions */
+  const actBtn = e.target.closest('[data-act]');
+  if (actBtn) {
+    const host = actBtn.closest('[data-id]');
+    if (!host) return;
+    const item = state.index[state.console].get(host.dataset.id);
+    if (!item) return;
+    const act = actBtn.dataset.act;
+    if (act === 'copy') copyText(item.magnet);
+    else if (act === 'open') window.location.href = item.magnet;
+    else if (act === 'info') openDrawer(item);
+    return;
+  }
+
+  /* drawer close */
+  if (e.target.closest('[data-close]')) { closeDrawer(); return; }
+
+  /* letter filter */
+  const letterBtn = e.target.closest('[data-letter]');
+  if (letterBtn) {
+    state.letter = letterBtn.dataset.letter;
+    $$('#letters button').forEach(b => b.classList.toggle('active', b.dataset.letter === state.letter));
+    resetAndRender();
+    return;
+  }
+
+  /* view toggle */
+  const viewBtn = e.target.closest('[data-view]');
+  if (viewBtn) {
+    state.view = viewBtn.dataset.view;
+    $$('.view-toggle button').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
+    resetAndRender();
+    return;
+  }
+});
+
+/* search */
+let searchTimer;
+$('#search').addEventListener('input', (e) => {
+  const val = e.target.value;
+  $('#searchClear').hidden = !val;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    state.query = val;
+    resetAndRender();
+  }, 140);
+});
+$('#searchClear').addEventListener('click', () => {
+  $('#search').value = '';
+  $('#searchClear').hidden = true;
+  state.query = '';
+  resetAndRender();
+  $('#search').focus();
+});
+
+/* sort */
+$('#sort').addEventListener('change', (e) => {
+  state.sort = e.target.value;
+  resetAndRender();
+});
+
+/* load more */
+$('#loadMore').addEventListener('click', () => {
+  state.page += 1;
+  render();
+});
+
+/* switch console */
+$('#consolePill').addEventListener('click', returnToSplash);
+
+/* keyboard */
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && $('#app').hidden === false) {
+    const active = document.activeElement;
+    if (active && /input|textarea|select/i.test(active.tagName)) return;
+    e.preventDefault();
+    $('#search').focus();
+  }
+  if (e.key === 'Escape') {
+    if ($('#drawer').getAttribute('aria-hidden') === 'false') closeDrawer();
+  }
+});
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+document.body.dataset.console = 'ps4';
+buildLetters();
+loadCatalogs();
+
+})();
+</script>
+</body>
+</html>
