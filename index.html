@@ -161,7 +161,35 @@ input,select{ font:inherit; color:inherit; }
 .cc-enter i{ font-style:normal; transition:transform .3s; }
 .console-card:hover .cc-enter i{ transform:translateX(5px); }
 
-.splash-foot{ margin-top:42px; font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted-2); }
+/* ---- social links (splash) ---- */
+.social-row{
+  display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+  margin:40px 0 0;
+}
+.social-btn{
+  display:inline-flex; align-items:center; gap:9px;
+  padding:10px 18px; border-radius:11px;
+  background:rgba(255,255,255,.05); border:1px solid var(--line);
+  font-size:12.5px; font-weight:650; letter-spacing:.02em;
+  text-decoration:none; color:var(--text);
+  transition:transform .2s, border-color .2s, background .2s, box-shadow .2s, color .2s;
+}
+.social-btn svg{ width:16px; height:16px; flex:0 0 auto; fill:currentColor; }
+.social-btn:hover{
+  transform:translateY(-3px);
+  background:rgba(255,255,255,.1);
+  border-color:var(--social, var(--line-strong));
+  box-shadow:0 14px 30px -16px var(--social, transparent);
+  color:#fff;
+}
+.social-btn.github{ --social:#c9d1d9; }
+.social-btn.github:hover{ color:#e6edf3; }
+.social-btn.x{ --social:#ffffff; }
+.social-btn.x:hover{ color:#ffffff; }
+.social-btn.telegram{ --social:#2aabee; }
+.social-btn.telegram:hover{ color:#66c9f5; }
+
+.splash-foot{ margin-top:32px; font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted-2); }
 
 .manual{
   margin:34px auto 0; max-width:560px; display:none;
@@ -275,6 +303,27 @@ select#sort option{ background:#0b1120; }
 }
 .letters button:hover{ color:#fff; background:rgba(255,255,255,.07); }
 .letters button.active{ color:#fff; background:color-mix(in srgb, var(--accent) 30%, transparent); border-color:color-mix(in srgb, var(--accent) 55%, transparent); }
+
+/* ---- social links (app, compact) ---- */
+.social-mini{ display:flex; gap:6px; flex:0 0 auto; }
+.social-mini a{
+  width:32px; height:32px; border-radius:9px;
+  display:grid; place-items:center;
+  border:1px solid var(--line); background:rgba(255,255,255,.05);
+  color:var(--muted); text-decoration:none;
+  transition:transform .18s, color .18s, border-color .18s, background .18s, box-shadow .18s;
+}
+.social-mini a svg{ width:15px; height:15px; fill:currentColor; }
+.social-mini a:hover{
+  color:#fff; border-color:var(--line-strong);
+  background:rgba(255,255,255,.12); transform:translateY(-2px);
+  box-shadow:0 10px 22px -12px var(--social, transparent);
+}
+.social-mini a.github{ --social:#c9d1d9; }
+.social-mini a.github:hover{ color:#e6edf3; }
+.social-mini a.x{ --social:#ffffff; }
+.social-mini a.telegram{ --social:#2aabee; }
+.social-mini a.telegram:hover{ color:#66c9f5; }
 
 /* ============================================================
    LIST
@@ -468,6 +517,7 @@ select#sort option{ background:#0b1120; }
   .console-card{ width:100%; max-width:340px; }
   .splash-title span{ font-size:.42em; }
   .d-grid{ grid-template-columns:1fr; }
+  .social-btn{ padding:9px 14px; font-size:12px; }
 }
 </style>
 </head>
@@ -505,6 +555,22 @@ select#sort option{ background:#0b1120; }
         </div>
         <div class="cc-enter">Enter library <i>→</i></div>
       </button>
+    </div>
+
+    <!-- ===== SOCIAL LINKS (SPLASH) ===== -->
+    <div class="social-row">
+      <a class="social-btn github" href="https://github.com/OptiTronOffical" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.73.8 1.18 1.83 1.18 3.08 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.05.77 2.12 0 1.53-.01 2.76-.01 3.14 0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+        GitHub
+      </a>
+      <a class="social-btn x" href="https://x.com/bhanco2023" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        X / Twitter
+      </a>
+      <a class="social-btn telegram" href="https://t.me/+ubSiC6ieT-Y5ZTI0" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        Telegram
+      </a>
     </div>
 
     <div class="manual" id="manual">
@@ -570,6 +636,19 @@ select#sort option{ background:#0b1120; }
         <div class="stat"><b id="statSize">0</b><span>Total size</span></div>
       </div>
       <div class="letters" id="letters"></div>
+
+      <!-- ===== SOCIAL LINKS (APP) ===== -->
+      <div class="social-mini" aria-label="Social links">
+        <a class="github" href="https://github.com/OptiTronOffical" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.73.8 1.18 1.83 1.18 3.08 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.05.77 2.12 0 1.53-.01 2.76-.01 3.14 0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+        </a>
+        <a class="x" href="https://x.com/bhanco2023" target="_blank" rel="noopener noreferrer" title="X / Twitter" aria-label="X / Twitter">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a class="telegram" href="https://t.me/+ubSiC6ieT-Y5ZTI0" target="_blank" rel="noopener noreferrer" title="Telegram" aria-label="Telegram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        </a>
+      </div>
     </div>
   </header>
 
